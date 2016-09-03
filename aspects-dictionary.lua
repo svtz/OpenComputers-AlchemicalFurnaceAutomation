@@ -11,13 +11,12 @@ local aspectsDict =
 }
 --]]
 
-function dictionary.init(apiWrapper)
+function dictionaryFactory.init(apiWrapper)
   if apiWrapper == nil then
     error("This module requires 'apiWrapper' to be loaded.")
   end
   api = {
       component = apiWrapper.component
-      aspectsDict = apiWrapper.aspectsDictionary
   }
 end
 
@@ -36,13 +35,13 @@ local function getDatabases()
   return dbs, dbsCount
 end
 
-function dictionaryFactory.GetDictionary(aspectsDict)
+function dictionaryFactory.getDictionary(aspectsDict)
   local dictionary = {}
   
   local dbs, dbsCount = getDatabases()
   dictionary.getItemByAspect = function(aspect)
     local itemInfo = aspectsDict[aspect]
-    if itemInfo = nil then
+    if itemInfo == nil then
       error('Could not find recipe for ' .. aspect)
     end
 
