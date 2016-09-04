@@ -90,18 +90,18 @@ function loaderFactory.getLoader(interfaceAddress, transposerAddress, interfaceS
       end
     end
 
-    local transferPerCycle = 1
+    --local transferPerCycle = 1
     -- transferring requested amount of items
-    local remainingAspectCount = amount
-    while remainingAspectCount > 0 do
+    local remainingStackCount = amount
+    while remainingStackCount > 0 do
       local totalTransferredPerCycle = 0
       for reqItemIdx = 1, interfaceSize do
         local reqItem = requestedItems[reqItemIdx]
         if reqItem == nil then break end
-        local transferred = transposer.transferItem(interfaceSide, furnaceSide, transferPerCycle, reqItem.configIdx)
-        local transferredCount = (transferred and transferPerCycle or 0)
-        remainingAspectCount = remainingAspectCount - reqItem.aspectPerItem * transferredCount 
-        if remainingAspectCount <= 0 then break end
+        local transferred = transposer.transferItem(interfaceSide, furnaceSide, reqItem.maxSize, reqItem.configIdx)
+        local transferredCount = (transferred and 1 or 0)
+        remainingStackCount = remainingStackCount - transferredCount 
+        if remainingStackCount <= 0 then break end
         totalTransferredPerCycle = totalTransferredPerCycle + transferredCount
       end
       if totalTransferredPerCycle == 0 then break end

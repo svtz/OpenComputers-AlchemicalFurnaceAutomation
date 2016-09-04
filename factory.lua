@@ -1,3 +1,5 @@
+print('Initializing factory...')
+
 local aspectsDict = 
 {
     ['arbor'] = { ['dbHash'] = 'da8a0d6fe2dbefc51465e3263a800a45c8e28491aba2f8bf280ed54a1abb7367', aspectPerItem=4 },
@@ -17,8 +19,15 @@ local aspectsDict =
     ['perditio']  = { ['dbHash'] = '8f87afc6b6cc8cbb3d973c5a9fa0a0973d9c2c8e2727ec389b479252058dda4f', aspectPerItem=2 },
     ['messis']  = { ['dbHash'] = '8b106d64a741bd634abb3a79b7b0708f41094c87a7fd4d91120dff483c4d742d', aspectPerItem=3 },
     ['fames']  = { ['dbHash'] = '8b106d64a741bd634abb3a79b7b0708f41094c87a7fd4d91120dff483c4d742d', aspectPerItem=3 },
-    ['permutatio']  = { ['dbHash'] = '8b106d64a741bd634abb3a79b7b0708f41094c87a7fd4d91120dff483c4d742d', aspectPerItem=3 }
+    ['permutatio']  = { ['dbHash'] = '8b106d64a741bd634abb3a79b7b0708f41094c87a7fd4d91120dff483c4d742d', aspectPerItem=3 },
+    ['vacuos']  = { ['dbHash'] = '15a3b59380369fe63a390d7c5a08ed674617928b081042ffff88a3bbd18e252b', aspectPerItem=10 },
+    ['tenebrae']  = { ['dbHash'] = 'e53c49f599f69fc5afecbcec03c983e4e13376d67079e2c298dd18051805b2b4', aspectPerItem=3 }
 }
+
+local aspectsToMaintain = {}
+for k,v in pairs(aspectsDict) do
+  aspectsToMaintain[k] = 8190
+end
 
 local apiWrapper = 
 {
@@ -27,15 +36,7 @@ local apiWrapper =
 
 local dictFactory = require("aspects-dictionary")
 dictFactory.init(apiWrapper)
-
 local dictionary = dictFactory.getDictionary(aspectsDict)
---[[
-for k,v in pairs(aspectsDict) do
-  local a,b,c,d,e,f = dictionary.getItemByAspect(k)
-  print(k,a,b,c,d,e,f)
-  io.read()
-end
---]]
 
 local loaderFactory = require("furnace-loader")
 apiWrapper.aspectsDictionary = dictionary
@@ -48,9 +49,9 @@ for k,v in pairs(component.list()) do if v=="me_interface" then interfaceAddress
 local transposerAddress
 for k,v in pairs(component.list()) do if v=="transposer" then transposerAddress=k end end
 
---[[
-local loader = loaderFactory.getLoader(interfaceAddress, transposerAddress, sides.east, sides.north)
+local loader = loaderFactory.getLoader(interfaceAddress, transposerAddress, sides.bottom, sides.south)
 
+--[[
 local request = 
 {
     [1]='permutatio',
@@ -60,18 +61,56 @@ local request =
     [5]='fames'
 }
 loader.load(request, 10)
+]]--
 
---]]
-
-local controllerFactory = dofile("aspect-level-controller.lua")--require("aspect-level-controller")
+local controllerFactory = require("aspect-level-controller")
 controllerFactory.init(apiWrapper)
-
-local aspectsToMaintain = 
-{
-    ['perditio'] = 8192,
-    ['potentia'] = 8192,
-    ['lucrum'] = 100,
-    ['praecantatio'] = 8300
-}
 local controller = controllerFactory.getController(interfaceAddress, aspectsToMaintain)
-for k,v in pairs(controller.getLowLevelAspects()) do print(k,v) end
+--for k,v in pairs(controller.getLowLevelAspects()) do print(k,v) end
+
+local radarAddress
+for k,v in pairs(component.list()) do if v=="radar" then radarAddress=k end end
+local radar = component.proxy(radarAddress)
+
+local stacksToKeep = 4
+local radarRange = 4
+
+print('Initialization complete. Starting main loop...')
+
+-- main loop
+while true do
+  local stacksInFurnace = radar.getItems(radarRange)
+  local stacksInFurnaceCount = 0
+  local itemsInFurnaceCount = 0
+  for k,v in pairs(stacksInFurnace) do
+    stacksInFurnaceCount = stacksInFurnaceCount + 1
+    itemsInFurnaceCount = itemsInFurnaceCount + v.size
+  end
+
+  print('stacks: ' .. stacksInFurnaceCount .. '; items: ' .. itemsInFurnaceCount)
+
+  local stacksCanAdd = 0
+  if stacksInFurnaceCount < stacksToKeep then
+    stacksCanAdd = stacksToKeep - stacksInFurnaceCount
+  elseif stacksInFurnaceCount < stacksToKeep * 2 then
+    local itemsInOneStack = itemsInFurnaceCount / stacksInFurnaceCount
+    if itemsInOneStack < 32 then 
+      stacksCanAdd = stacksToKeep * 2 - stacksInFurnaceCount  
+    end
+  end
+
+  if stacksCanAdd > 0 then
+    local lowAspects, lowAspectsCount = controller.getLowLevelAspects()
+    if lowAspectsCount > 0 then
+      print('[' .. os.date("%X") .. '] ' .. lowAspectsCount .. ' aspects requires refilling. Loading ' .. stacksCanAdd .. ' stacks into the furnace.')
+      loader.load(lowAspects, stacksCanAdd)
+    else
+      print('[' .. os.date("%X") .. '] All aspects are at full capacity. Sleeping...')
+      loader.load(lowAspects, 0)
+      os.sleep(5)   
+    end
+  else
+    print('[' .. os.date("%X") .. '] Furnce is full. Sleeping...')
+    os.sleep(5)
+  end
+end

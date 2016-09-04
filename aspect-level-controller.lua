@@ -43,7 +43,7 @@ function controllerFactory.getController(interfaceAddress, aspectsList)
     local lowAspectsCount = 0
 
     for k,v in pairs(aspectsList) do
-      print('searching for ' .. k)
+ --     print('searching for ' .. k)
       local essentiaName = k
       local requestedLevel = v
       local fluid
@@ -52,7 +52,7 @@ function controllerFactory.getController(interfaceAddress, aspectsList)
         fluid = fluids[fluidIdx]
         if not (fluid == nil) and string.find(fluid.name, k) then
           fluids[fluidIdx] = nil
-          print('found ' .. fluid.name)
+   --       print('found ' .. fluid.name)
           found = true
           break 
         end
@@ -68,7 +68,7 @@ function controllerFactory.getController(interfaceAddress, aspectsList)
 
     sort(lowAspects, lowAspectsAmounts, lowAspectsCount)
 
-    return lowAspects
+    return lowAspects, lowAspectsCount
   end
 
   return controller
