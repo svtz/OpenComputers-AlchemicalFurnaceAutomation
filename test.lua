@@ -63,7 +63,7 @@ loader.load(request, 10)
 
 --]]
 
-local controllerFactory = require("aspect-level-controller")
+local controllerFactory = dofile("aspect-level-controller.lua")--require("aspect-level-controller")
 controllerFactory.init(apiWrapper)
 
 local aspectsToMaintain = 
@@ -74,4 +74,4 @@ local aspectsToMaintain =
     ['praecantatio'] = 8300
 }
 local controller = controllerFactory.getController(interfaceAddress, aspectsToMaintain)
-for k,v in pairs(controller.getLowLevelAspects()) do print(k) end
+for k,v in pairs(controller.getLowLevelAspects()) do print(k,v) end
