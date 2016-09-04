@@ -48,6 +48,7 @@ for k,v in pairs(component.list()) do if v=="me_interface" then interfaceAddress
 local transposerAddress
 for k,v in pairs(component.list()) do if v=="transposer" then transposerAddress=k end end
 
+--[[
 local loader = loaderFactory.getLoader(interfaceAddress, transposerAddress, sides.east, sides.north)
 
 local request = 
@@ -59,3 +60,18 @@ local request =
     [5]='fames'
 }
 loader.load(request, 10)
+
+--]]
+
+local controllerFactory = require("aspect-level-controller")
+controllerFactory.init(apiWrapper)
+
+local aspectsToMaintain = 
+{
+    ['perditio'] = 8192,
+    ['potentia'] = 8192,
+    ['lucrum'] = 100,
+    ['praecantatio'] = 8300
+}
+local controller = controllerFactory.getController(interfaceAddress, aspectsToMaintain)
+for k,v in pairs(controller.getLowLevelAspects()) do print(k) end
