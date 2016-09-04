@@ -9,7 +9,7 @@ function loaderFactory.init(apiWrapper)
     error("This module requires 'apiWrapper' to be loaded.")
   end
   api = {
-      component = apiWrapper.component
+      component = apiWrapper.component,
       aspectsDict = apiWrapper.aspectsDictionary
   }
 end 
@@ -18,15 +18,15 @@ function loaderFactory.getLoader(interfaceAddress, transposerAddress, interfaceS
   local loader = {}
 
   local interface = api.component.proxy(interfaceAddress)
-  if interface == nil or interface.type != interfaceType then
+  if interface == nil or not (interface.type == interfaceType) then
     error('Invalid interface address')
   end
-  local interfaceSize = transposer.getInventorySize(interfaceSide)
 
-  local transposer = api.component.proxy(interfaceAddress)
-  if transposer == nil or transposer.type != transposerType then
+  local transposer = api.component.proxy(transposerAddress)
+  if transposer == nil or not (transposer.type == transposerType) then
     error('Invalid inventory manager address')
   end
+  local interfaceSize = transposer.getInventorySize(interfaceSide)
 
   local getRequestedItems = function(aspects)
     local result = {}
@@ -40,10 +40,12 @@ function loaderFactory.getLoader(interfaceAddress, transposerAddress, interfaceS
         currentResult.dbAddress, 
         currentResult.entry, 
         currentResult.maxSize,
-        currentResult.aspectPerItem = aspectsDict.getItemByAspect(reqAspect)
+        currentResult.aspectPerItem = api.aspectsDict.getItemByAspect(reqAspect)
 
       result[reqAspectIdx] = currentResult
     end
+
+    return result
   end
 
   loader.load = function(aspects, amount)
@@ -53,11 +55,14 @@ function loaderFactory.getLoader(interfaceAddress, transposerAddress, interfaceS
     local validConfigurations = {}
     for reqItemIdx = 1, interfaceSize do
       local reqItem = requestedItems[reqItemIdx]
+      if reqItem == nil then break end
+    --  print('looking for already configured item ' .. reqItem.label)
       for configIdx = 1, interfaceSize do
         local config = interface.getInterfaceConfiguration(configIdx)
-        if config.name == reqItem.name and config.label == reqItem.label then
+        if not (config == nil) and config.name == reqItem.name and config.label == reqItem.label then
           validConfigurations[configIdx] = true
           reqItem.configIdx = configIdx
+      --    print('found in slot '..configIdx)
           break
         end
       end
@@ -65,10 +70,11 @@ function loaderFactory.getLoader(interfaceAddress, transposerAddress, interfaceS
 
     -- configuring remaining items
     for reqItemIdx = 1, interfaceSize do
-      local reqItem = requestedItems[reqItemIdx]     
+      local reqItem = requestedItems[reqItemIdx]
+      if reqItem == null then break end     
       if reqItem.configIdx == nil then
         for configIdx = 1, interfaceSize do
-          if validConfigurations[configIdx] != true then
+          if not validConfigurations[configIdx] == true then
             validConfigurations[configIdx] = true
             reqItem.configIdx = configIdx
             interface.setInterfaceConfiguration(configIdx, reqItem.dbAddress, reqItem.entry, reqItem.maxSize)
@@ -78,15 +84,27 @@ function loaderFactory.getLoader(interfaceAddress, transposerAddress, interfaceS
       end
     end
 
+    for configIdx = 1, interfaceSize do
+      if not validConfigurations[configIdx] == true then
+        interface.setInterfaceConfiguration(configIdx)
+      end
+    end
+
+    local transferPerCycle = 1
     -- transferring requested amount of items
     local remainingAspectCount = amount
     while remainingAspectCount > 0 do
+      local totalTransferredPerCycle = 0
       for reqItemIdx = 1, interfaceSize do
         local reqItem = requestedItems[reqItemIdx]
-        local transferred = transposer.transferItem(interfaceSide, furnaceSide, 1, reqItem.configIdx)
-        remainingAspectCount = remainingAspectCount - reqItem.aspectPerItem * transferred
-        if transferred == 0 or remainingAspectCount <= 0 then break end
+        if reqItem == nil then break end
+        local transferred = transposer.transferItem(interfaceSide, furnaceSide, transferPerCycle, reqItem.configIdx)
+        local transferredCount = (transferred and transferPerCycle or 0)
+        remainingAspectCount = remainingAspectCount - reqItem.aspectPerItem * transferredCount 
+        if remainingAspectCount <= 0 then break end
+        totalTransferredPerCycle = totalTransferredPerCycle + transferredCount
       end
+      if totalTransferredPerCycle == 0 then break end
     end
   end
 

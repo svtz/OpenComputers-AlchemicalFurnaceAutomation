@@ -29,9 +29,33 @@ local dictFactory = require("aspects-dictionary")
 dictFactory.init(apiWrapper)
 
 local dictionary = dictFactory.getDictionary(aspectsDict)
-
+--[[
 for k,v in pairs(aspectsDict) do
   local a,b,c,d,e,f = dictionary.getItemByAspect(k)
   print(k,a,b,c,d,e,f)
   io.read()
 end
+--]]
+
+local loaderFactory = require("furnace-loader")
+apiWrapper.aspectsDictionary = dictionary
+loaderFactory.init(apiWrapper)
+
+local sides = require("sides")
+local component = apiWrapper.component
+local interfaceAddress
+for k,v in pairs(component.list()) do if v=="me_interface" then interfaceAddress=k end end
+local transposerAddress
+for k,v in pairs(component.list()) do if v=="transposer" then transposerAddress=k end end
+
+local loader = loaderFactory.getLoader(interfaceAddress, transposerAddress, sides.east, sides.north)
+
+local request = 
+{
+    [1]='permutatio',
+    [2]='terra',
+    [3]='praecantatio',
+    [4]='perditio',
+    [5]='fames'
+}
+loader.load(request, 10)
