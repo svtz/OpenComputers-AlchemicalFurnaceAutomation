@@ -34,14 +34,7 @@ function loaderFactory.getLoader(interfaceAddress, transposerAddress, interfaceS
       local reqAspect = aspects[reqAspectIdx]
       if reqAspect == nil then break end
       
-      local currentResult = {}
-      currentResult.label,
-        currentResult.name,
-        currentResult.dbAddress, 
-        currentResult.entry, 
-        currentResult.maxSize,
-        currentResult.aspectPerItem = api.aspectsDict.getItemByAspect(reqAspect)
-
+      local currentResult = api.aspectsDict.getItemByAspect(reqAspect)
       result[reqAspectIdx] = currentResult
     end
 
