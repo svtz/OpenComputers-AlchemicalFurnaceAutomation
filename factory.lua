@@ -77,7 +77,7 @@ while true do
     itemsInFurnaceCount = itemsInFurnaceCount + v.size
   end
 
-  print('stacks: ' .. stacksInFurnaceCount .. '; items: ' .. itemsInFurnaceCount)
+  --print('stacks: ' .. stacksInFurnaceCount .. '; items: ' .. itemsInFurnaceCount)
 
   local stacksCanAdd = 0
   if stacksInFurnaceCount < stacksToKeep then

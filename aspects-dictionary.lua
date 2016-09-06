@@ -83,7 +83,7 @@ function dictionaryFactory.getDictionary(aspectsDict)
       for j = 1, 100 do
         local stack
         if pcall(function() stack = db.get(j) end) then
-          if not (stack == nil) and stack.label = label then
+          if not (stack == nil) and stack.label == label then
             if candidate == nil then
               candidate = db.computeHash(j)
             else
@@ -97,7 +97,7 @@ function dictionaryFactory.getDictionary(aspectsDict)
       end
     end
 
-    for k,v in aspectsDict do
+    for k,v in pairs(aspectsDict) do
       if v.dbHash == candidate then
         aspects.n = aspects.n + 1
         aspects[aspects.n] = { name = k, perItem = v.aspectPerItem }

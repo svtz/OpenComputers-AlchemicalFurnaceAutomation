@@ -71,7 +71,7 @@ function controllerFactory.getController(interfaceAddress, radarAddress, aspects
       local itemsInFurnace = radar.getItems(radarRange)
       for k,v in pairs(itemsInFurnace) do
         local itemLabel = v.label
-        local itemAspects = aspectsDict.getByLabel(itemLabel)
+        local itemAspects = api.aspectsDict.getByLabel(itemLabel)
         for i = 1, itemAspects.n do
           if itemAspects[i].name == essentiaName then
             essentiaAmount = essentiaAmount + v.size * itemAspects[i].perItem
