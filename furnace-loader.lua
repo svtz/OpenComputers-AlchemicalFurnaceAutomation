@@ -66,6 +66,7 @@ function loaderFactory.getLoader(interfaceAddress, transposerAddress, interfaceS
     for reqItemIdx = 1, interfaceSize do
       local reqItem = requestedItems[reqItemIdx]
       if reqItem == nil then break end
+      reqItem.configIdx = nil
       api.log.debug('- searching ' .. reqItem.label)
       for configIdx = 1, interfaceSize do
         local config = interface.getInterfaceConfiguration(configIdx)
