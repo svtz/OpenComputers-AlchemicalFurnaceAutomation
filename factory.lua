@@ -1,5 +1,3 @@
-print('Initializing factory...')
-
 local aspectsDict = 
 {
     ['arbor'] = { ['dbHash'] = 'da8a0d6fe2dbefc51465e3263a800a45c8e28491aba2f8bf280ed54a1abb7367', aspectPerItem=3 },
@@ -32,25 +30,28 @@ end
 local radarRange = 4
 local stacksToKeep = 4
 
+local logger = dofile("logger.lua")
+local dictFactory = dofile("aspects-dictionary.lua")
+local loaderFactory = dofile("furnace-loader.lua")
+local sides = dofile("sides.lua")
+local controllerFactory = dofile("aspect-level-controller.lua")
+local component = require("component")
 
+local log = logger.debug
+log.info("Starting initialization")
 local apiWrapper = 
 {
-    component = require("component")
+    component = component
 }
 
-local dictFactory = require("aspects-dictionary")
-local loaderFactory = require("furnace-loader")
-local sides = require("sides")
-local controllerFactory = require("aspect-level-controller")
-
-dictFactory.init(apiWrapper)
+dictFactory.init(apiWrapper, logger.debug)
 local dictionary = dictFactory.getDictionary(aspectsDict)
 apiWrapper.aspectsDictionary = dictionary
-loaderFactory.init(apiWrapper)
-controllerFactory.init(apiWrapper)
+loaderFactory.init(apiWrapper, logger.debug)
+controllerFactory.init(apiWrapper, logger.debug)
 
 
-local component = apiWrapper.component
+
 
 local interfaceAddress
 local transposerAddress
@@ -65,10 +66,13 @@ local controller = controllerFactory.getController(interfaceAddress, radarAddres
 local radar = component.proxy(radarAddress)
 
 
-print('Initialization complete. Starting main loop...')
+log.info('Initialization complete. Starting main loop...')
 
 -- main loop
 while true do
+  log.debug('main loop')
+
+  log.debug('counting stacks in the furnace')
   local stacksInFurnace = radar.getItems(radarRange)
   local stacksInFurnaceCount = 0
   local itemsInFurnaceCount = 0
@@ -77,7 +81,7 @@ while true do
     itemsInFurnaceCount = itemsInFurnaceCount + v.size
   end
 
-  --print('stacks: ' .. stacksInFurnaceCount .. '; items: ' .. itemsInFurnaceCount)
+  log.debug('in furnace, stacks: ' .. stacksInFurnaceCount .. '; items: ' .. itemsInFurnaceCount)
 
   local stacksCanAdd = 0
   if stacksInFurnaceCount < stacksToKeep then
@@ -88,19 +92,20 @@ while true do
       stacksCanAdd = stacksToKeep * 2 - stacksInFurnaceCount  
     end
   end
+  log.debug('can add: ' .. stacksCanAdd .. ' stacks')
 
   if stacksCanAdd > 0 then
     local lowAspects, lowAspectsCount = controller.getLowLevelAspects()
     if lowAspectsCount > 0 then
-      print('[' .. os.date("%X") .. '] ' .. lowAspectsCount .. ' aspects requires refilling. Loading ' .. stacksCanAdd .. ' stacks into the furnace.')
+      log.debug(lowAspectsCount .. ' aspects requires refilling. Loading ' .. stacksCanAdd .. ' stacks into the furnace.')
       loader.load(lowAspects, stacksCanAdd)
     else
-      print('[' .. os.date("%X") .. '] All aspects are at full capacity. Sleeping...')
+      log.debug('All aspects are at full capacity. Sleeping...')
       loader.load(lowAspects, 0)
       os.sleep(5)   
     end
   else
-    print('[' .. os.date("%X") .. '] Furnce is full. Sleeping...')
+    loader.debug('Furnce is full. Sleeping...')
     os.sleep(5)
   end
 end
