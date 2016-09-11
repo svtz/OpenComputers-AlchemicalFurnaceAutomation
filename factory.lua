@@ -33,7 +33,7 @@ local stacksToKeep = 4
 local logger = dofile("logger.lua")
 local dictFactory = dofile("aspects-dictionary.lua")
 local loaderFactory = dofile("furnace-loader.lua")
-local sides = dofile("sides.lua")
+local sides = require("sides")
 local controllerFactory = dofile("aspect-level-controller.lua")
 local component = require("component")
 

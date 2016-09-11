@@ -15,7 +15,7 @@ function dictionaryFactory.init(apiWrapper, log)
     error("This module requires 'log'.")  
   end
   api = {
-      component = apiWrapper.component
+      component = apiWrapper.component,
       log = log
   }
 
@@ -68,8 +68,8 @@ function dictionaryFactory.getDictionary(aspectsDict)
       local db = dbs[i]
       local stackIdx = db.indexOf(itemInfo.dbHash)
       if stackIdx >= 0 then
-        api.log.debug('Found itemStack: ' .. stack.label .. ', ok')
         local stack = db.get(stackIdx)
+        api.log.debug('Found itemStack: ' .. stack.label .. ', ok')
         getItemByAspectCache[aspect] = {
           label = stack.label,
           name = stack.name,
@@ -121,7 +121,7 @@ function dictionaryFactory.getDictionary(aspectsDict)
       end
     end
 
-    api.log.debug('Searching candidate's aspects in pre-configured dictionary')
+    api.log.debug("Searching candidate's aspects in pre-configured dictionary")
     local aspects = { n = 0 }
     for k,v in pairs(aspectsDict) do
       if v.dbHash == candidate then
@@ -133,7 +133,7 @@ function dictionaryFactory.getDictionary(aspectsDict)
 
     if (aspects.n > 0) then
       getByLabelCache[label] = aspects
-      api.log.debug("Found .." aspects.n .. " aspects, ok")
+      api.log.debug("Found " .. aspects.n .. " aspects, ok")
     else
       api.log.warn("No pre-configured data for label: " .. label)
     end

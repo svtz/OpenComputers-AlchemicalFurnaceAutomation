@@ -19,7 +19,8 @@ function loaderFactory.init(apiWrapper, log)
   end
   api = {
       component = apiWrapper.component,
-      aspectsDict = apiWrapper.aspectsDictionary
+      aspectsDict = apiWrapper.aspectsDictionary,
+      log = log
   }
 
   api.log.info("Module 'furnace-loader' initialized")
@@ -101,7 +102,7 @@ function loaderFactory.getLoader(interfaceAddress, transposerAddress, interfaceS
     for configIdx = 1, interfaceSize do
       if not validConfigurations[configIdx] == true then
         interface.setInterfaceConfiguration(configIdx)
-        api.log.debug('- ' .. configIdx ' cleared')
+        api.log.debug('- ' .. configIdx .. ' cleared')
       end
     end
 

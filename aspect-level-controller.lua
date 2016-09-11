@@ -20,7 +20,7 @@ function controllerFactory.init(apiWrapper, log)
   end
   api = {
       component = apiWrapper.component,
-      aspectsDict = apiWrapper.aspectsDictionary
+      aspectsDict = apiWrapper.aspectsDictionary,
       log = log
   }
 
@@ -89,15 +89,15 @@ function controllerFactory.getController(interfaceAddress, radarAddress, aspects
         end
       end
       local essentiaAmount = found and (fluid.amount / gasToEssentiaCoefficient) or 0
-      api.log.debug('- aspect level: essentiaAmount')
+      api.log.debug('- aspect level:' .. essentiaAmount)
 
       -- check if it requires refilling
       if essentiaAmount < requestedLevel then
         lowAspectsCount = lowAspectsCount + 1
         lowAspects[lowAspectsCount] = essentiaName
-        lowAspectsAmounts[lowAspectsCount] = 100 - ((requestedLevel - essentiaAmount) * 100 / requestedLevel
+        lowAspectsAmounts[lowAspectsCount] = 100 - ((requestedLevel - essentiaAmount) * 100 / requestedLevel)
         lowAspectsIdxs[essentiaName] = lowAspectsCount
-        api.log.debug("- it's at low level (".. lowAspectsAmounts[lowAspectsCount] .. "%)"))
+        api.log.debug("- it's at low level (" .. lowAspectsAmounts[lowAspectsCount] .. "%)")
       end
     end
 
@@ -108,11 +108,13 @@ function controllerFactory.getController(interfaceAddress, radarAddress, aspects
       api.log.debug('- stack: ' .. v.label)
       local itemAspects = api.aspectsDict.getByLabel(v.label)
       for i = 1, itemAspects.n do
+        api.log.debug('- aspect: ' .. itemAspects[i].name .. '; perItem: ' .. itemAspects[i].perItem)
         local aspectIdx = lowAspectsIdxs[itemAspects[i].name]
         if not (aspectIdx == nil) then
-          local aspectInItem = itemAspects[i].aspectPerItem * v.size
+          api.log.debug('- index: ' .. aspectIdx)
+          local aspectInItem = itemAspects[i].perItem * v.size
           api.log.debug("- adding " .. aspectInItem .. " to " .. lowAspects[aspectIdx])
-          lowAspectsAmounts[levelIdx] = lowAspectsAmounts[levelIdx] + aspectInItem
+          lowAspectsAmounts[aspectIdx] = lowAspectsAmounts[aspectIdx] + aspectInItem
         else
           api.log.debug("- item " .. v.label .. " is not in low-level list")
         end
