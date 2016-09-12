@@ -7,7 +7,7 @@ local aspectsDict =
 
 local aspectsToMaintain = {}
 for k,v in pairs(aspectsDict) do
-  aspectsToMaintain[k] = 8000
+  aspectsToMaintain[k] = 7000
 end
 
 local radarRange = 3
