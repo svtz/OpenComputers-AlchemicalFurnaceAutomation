@@ -1,5 +1,5 @@
 local logFileName = "log.txt"
-local logFileThreshold = 500 * 1024
+local logFileThreshold = 400 * 1024
 
 local fs = require("filesystem")
 local logfile = fs.open(logFileName, "a")

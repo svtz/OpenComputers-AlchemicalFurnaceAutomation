@@ -42,9 +42,11 @@ local function sort(lowAspects, lowAspectsAmounts, lowAspectsCount)
         lowAspectsAmounts[i] = lowAspectsAmounts[i+1]
         lowAspectsAmounts[i+1] = tmp
       end
+      api.log.debug('- [' .. upper .. '] -> ' .. lowAspects[upper])
       upper = upper - 1
     end
   end
+  api.log.debug('- [' .. 1 .. '] -> ' .. lowAspects[1])
   api.log.debug('Sorting complete')
 end
 
@@ -68,7 +70,9 @@ function controllerFactory.getController(interfaceAddress, radarAddress, aspects
     local lowAspects = {}
     local lowAspectsAmounts = {}
     local lowAspectsCount = 0
-    local lowAspectsIdxs = {}
+
+    api.log.debug('Scanning items in the furnace')
+    local itemsInFurnace = radar.getItems(radarRange)
 
     api.log.debug('Searching low level aspects in the network')
     for k,v in pairs(aspectsList) do
@@ -91,33 +95,25 @@ function controllerFactory.getController(interfaceAddress, radarAddress, aspects
       local essentiaAmount = found and (fluid.amount / gasToEssentiaCoefficient) or 0
       api.log.debug('- aspect level:' .. essentiaAmount)
 
+      -- currently in furnace
+      for k,v in pairs(itemsInFurnace) do
+        api.log.debug('- item in the furnace: ' .. v.label .. ' x' .. v.size)
+        local itemAspects = api.aspectsDict.getByLabel(v.label)
+        for i = 1, itemAspects.n do
+          if itemAspects[i].name == essentiaName then
+            api.log.debug('- item with this aspect found in the furnace: ' .. v.label)
+            local aspectInStack = itemAspects[i].perItem * v.size
+            essentiaAmount = essentiaAmount + aspectInStack
+          end
+        end
+      end
+    
       -- check if it requires refilling
       if essentiaAmount < requestedLevel then
         lowAspectsCount = lowAspectsCount + 1
         lowAspects[lowAspectsCount] = essentiaName
         lowAspectsAmounts[lowAspectsCount] = 100 - ((requestedLevel - essentiaAmount) * 100 / requestedLevel)
-        lowAspectsIdxs[essentiaName] = lowAspectsCount
         api.log.debug("- it's at low level (" .. lowAspectsAmounts[lowAspectsCount] .. "%)")
-      end
-    end
-
-    -- currently in furnace
-    api.log.debug('Scanning items in the furnace')
-    local itemsInFurnace = radar.getItems(radarRange)
-    for k,v in pairs(itemsInFurnace) do
-      api.log.debug('- stack: ' .. v.label)
-      local itemAspects = api.aspectsDict.getByLabel(v.label)
-      for i = 1, itemAspects.n do
-        api.log.debug('- aspect: ' .. itemAspects[i].name .. '; perItem: ' .. itemAspects[i].perItem)
-        local aspectIdx = lowAspectsIdxs[itemAspects[i].name]
-        if not (aspectIdx == nil) then
-          api.log.debug('- index: ' .. aspectIdx)
-          local aspectInItem = itemAspects[i].perItem * v.size
-          api.log.debug("- adding " .. aspectInItem .. " to " .. lowAspects[aspectIdx])
-          lowAspectsAmounts[aspectIdx] = lowAspectsAmounts[aspectIdx] + aspectInItem
-        else
-          api.log.debug("- item " .. v.label .. " is not in low-level list")
-        end
       end
     end
 

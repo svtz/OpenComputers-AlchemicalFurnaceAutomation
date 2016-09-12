@@ -11,7 +11,7 @@ for k,v in pairs(aspectsDict) do
 end
 
 local radarRange = 3
-local stacksToKeep = 8
+local stacksToKeep = 4
 
 local logger = dofile("logger.lua")
 local dictFactory = dofile("aspects-dictionary.lua")
