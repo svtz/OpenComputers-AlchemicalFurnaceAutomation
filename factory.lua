@@ -9,7 +9,7 @@ local aspectsDict =
     ['alienis']  = { ['dbHash'] = 'e6a2b5400b7df28b380a7bc8d3d829fd27bf62edd271ecf4aef61c144147ae9d', aspectPerItem=2 },
     ['fabrico']  = { ['dbHash'] = '157ce4ee77cbe7dac042945ff2f01d2fda26e8b32db981b8b5d8f5b90bc9b49d', aspectPerItem=4 },
     ['lux']  = { ['dbHash'] = '21be5ee78a5946ceea8d9e00a0b32946e68c6ffe0b2e06b305f6a883f3ef09c3', aspectPerItem=1 },
-    ['herba']  = { ['dbHash'] = '16cede6115da3acb53ad9074b9f284f15d5c4a9be15549dc9c5020e2ef62d6d3', aspectPerItem=1 },
+    ['herba']  = { ['dbHash'] = '01d5f195a0f1130a7b7afc9e98d427e1d363f0ae062efec43392e4fb5eac9e8c', aspectPerItem=2 },
     ['praecantatio']  = { ['dbHash'] = '16cede6115da3acb53ad9074b9f284f15d5c4a9be15549dc9c5020e2ef62d6d3', aspectPerItem=1 },
     ['potentia']  = { ['dbHash'] = '8d2b26049f594ccaf34f830644652c981058b60f1434b8256e8304aeb5ec8fc2', aspectPerItem=2 },
     ['ignis']  = { ['dbHash'] = '8d2b26049f594ccaf34f830644652c981058b60f1434b8256e8304aeb5ec8fc2', aspectPerItem=2 },
