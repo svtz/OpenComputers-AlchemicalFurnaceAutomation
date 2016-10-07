@@ -18,8 +18,15 @@ local aspectsDict =
     ['messis']  = { ['dbHash'] = '8b106d64a741bd634abb3a79b7b0708f41094c87a7fd4d91120dff483c4d742d', aspectPerItem=1 },
     ['fames']  = { ['dbHash'] = '8b106d64a741bd634abb3a79b7b0708f41094c87a7fd4d91120dff483c4d742d', aspectPerItem=1 },
     ['permutatio']  = { ['dbHash'] = '8b106d64a741bd634abb3a79b7b0708f41094c87a7fd4d91120dff483c4d742d', aspectPerItem=1 },
-    ['vacuos']  = { ['dbHash'] = '15a3b59380369fe63a390d7c5a08ed674617928b081042ffff88a3bbd18e252b', aspectPerItem=4 }, --?
-    ['tenebrae']  = { ['dbHash'] = 'e53c49f599f69fc5afecbcec03c983e4e13376d67079e2c298dd18051805b2b4', aspectPerItem=1 } --?
+    ['vacuos']  = { ['dbHash'] = '15a3b59380369fe63a390d7c5a08ed674617928b081042ffff88a3bbd18e252b', aspectPerItem=4 },
+    ['tenebrae']  = { ['dbHash'] = 'e53c49f599f69fc5afecbcec03c983e4e13376d67079e2c298dd18051805b2b4', aspectPerItem=1 },
+    ['humanus']  = { ['dbHash'] = '2212dc39e4c9dbb7bc2d51592c446a57204e5596eae1f70e39379eba503259ac', aspectPerItem=1 },
+    ['corpus']  = { ['dbHash'] = '2212dc39e4c9dbb7bc2d51592c446a57204e5596eae1f70e39379eba503259ac', aspectPerItem=2 },
+    ['aqua']  = { ['dbHash'] = '72ba1b7b1161728d19a2187b74659e85289a5c4e810f5c7c1949bb0206690688', aspectPerItem=1 },
+    ['aer']  = { ['dbHash'] = '72ba1b7b1161728d19a2187b74659e85289a5c4e810f5c7c1949bb0206690688', aspectPerItem=1 },
+    ['mortuus']  = { ['dbHash'] = 'b7dcd5ac2b95a1286ad81a1ece0d710c766622073f13903c5720b7d17c5bebda', aspectPerItem=4 },
+    ['spiritus']  = { ['dbHash'] = 'b7dcd5ac2b95a1286ad81a1ece0d710c766622073f13903c5720b7d17c5bebda', aspectPerItem=4 },
+    ['motus']  = { ['dbHash'] = '2b390abd03dadea55705419e8877ad14db942d6d505e83be34fd95c73e5024ca', aspectPerItem=4 }
 }
 
 local aspectsToMaintain = {}
