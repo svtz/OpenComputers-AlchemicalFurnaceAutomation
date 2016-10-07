@@ -26,7 +26,7 @@ local aspectsDict =
     ['aer']  = { ['dbHash'] = '72ba1b7b1161728d19a2187b74659e85289a5c4e810f5c7c1949bb0206690688', aspectPerItem=1 },
     ['mortuus']  = { ['dbHash'] = 'b7dcd5ac2b95a1286ad81a1ece0d710c766622073f13903c5720b7d17c5bebda', aspectPerItem=4 },
     ['spiritus']  = { ['dbHash'] = 'b7dcd5ac2b95a1286ad81a1ece0d710c766622073f13903c5720b7d17c5bebda', aspectPerItem=4 },
-    ['motus']  = { ['dbHash'] = '2b390abd03dadea55705419e8877ad14db942d6d505e83be34fd95c73e5024ca', aspectPerItem=4 }
+    ['motus']  = { ['dbHash'] = '2b390abd03dadea55705419e8877ad14db942d6d505e83be34fd95c73e5024ca', aspectPerItem=1 }
 }
 
 local aspectsToMaintain = {}
