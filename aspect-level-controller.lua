@@ -42,9 +42,9 @@ local function sort(lowAspects, lowAspectsAmounts, lowAspectsCount)
         lowAspectsAmounts[i] = lowAspectsAmounts[i+1]
         lowAspectsAmounts[i+1] = tmp
       end
-      api.log.debug('- [' .. upper .. '] -> ' .. lowAspects[upper])
-      upper = upper - 1
     end
+    api.log.debug('- [' .. upper .. '] -> ' .. lowAspects[upper])
+    upper = upper - 1    
   end
   if not (lowAspects[1] == nil) then
     api.log.debug('- [' .. 1 .. '] -> ' .. lowAspects[1])
