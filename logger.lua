@@ -3,10 +3,15 @@ local logFileThreshold = 400 * 1024
 
 local fs = require("filesystem")
 local logfile = fs.open(logFileName, "a")
+local canWriteToFile = true
 
 local function writeToFile(message)
-  if fs.size(logFileName) < logFileThreshold then
+  if not canWriteToFile then
+    return
+  elseif fs.size(logFileName) < logFileThreshold then
     logfile:write(message .. '\r\n')
+  else
+    canWriteToFile = false
   end
 end
 
