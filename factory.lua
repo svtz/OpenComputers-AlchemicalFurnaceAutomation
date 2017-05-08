@@ -1,32 +1,42 @@
-local aspectsDict = 
+local aspectsDict =
 {
-    ['arbor'] = { ['dbHash'] = 'da8a0d6fe2dbefc51465e3263a800a45c8e28491aba2f8bf280ed54a1abb7367', aspectPerItem=3 },
-    ['meto'] = { ['dbHash'] = 'da8a0d6fe2dbefc51465e3263a800a45c8e28491aba2f8bf280ed54a1abb7367', aspectPerItem=1 },
-    ['instrumentum']  = { ['dbHash'] = 'e1eb7f00c234839013ddef9f03229636d22de147adcf9fee626de1644fbf2c80', aspectPerItem=1 },
-    ['machina']  = { ['dbHash'] = '3cb44f9b5008c88719725f87bf2cedc83a5d0307bb3650c66b7b43e03958cb31', aspectPerItem=1 },
-    ['exanimis']  = { ['dbHash'] = '8b5883c60fb1e6cde2384682faae559a848a1e204b87b341149cffc960927199', aspectPerItem=2 },
-    ['auram']  = { ['dbHash'] = '8b5883c60fb1e6cde2384682faae559a848a1e204b87b341149cffc960927199', aspectPerItem=2 },
-    ['alienis']  = { ['dbHash'] = 'e6a2b5400b7df28b380a7bc8d3d829fd27bf62edd271ecf4aef61c144147ae9d', aspectPerItem=2 },
-    ['fabrico']  = { ['dbHash'] = '157ce4ee77cbe7dac042945ff2f01d2fda26e8b32db981b8b5d8f5b90bc9b49d', aspectPerItem=4 },
-    ['lux']  = { ['dbHash'] = '21be5ee78a5946ceea8d9e00a0b32946e68c6ffe0b2e06b305f6a883f3ef09c3', aspectPerItem=1 },
-    ['herba']  = { ['dbHash'] = '01d5f195a0f1130a7b7afc9e98d427e1d363f0ae062efec43392e4fb5eac9e8c', aspectPerItem=2 },
-    ['praecantatio']  = { ['dbHash'] = '16cede6115da3acb53ad9074b9f284f15d5c4a9be15549dc9c5020e2ef62d6d3', aspectPerItem=1 },
-    ['potentia']  = { ['dbHash'] = '8d2b26049f594ccaf34f830644652c981058b60f1434b8256e8304aeb5ec8fc2', aspectPerItem=2 },
-    ['ignis']  = { ['dbHash'] = '8d2b26049f594ccaf34f830644652c981058b60f1434b8256e8304aeb5ec8fc2', aspectPerItem=2 },
-    ['terra']  = { ['dbHash'] = '8f87afc6b6cc8cbb3d973c5a9fa0a0973d9c2c8e2727ec389b479252058dda4f', aspectPerItem=1 },
-    ['perditio']  = { ['dbHash'] = '8f87afc6b6cc8cbb3d973c5a9fa0a0973d9c2c8e2727ec389b479252058dda4f', aspectPerItem=1 },
-    ['messis']  = { ['dbHash'] = '8b106d64a741bd634abb3a79b7b0708f41094c87a7fd4d91120dff483c4d742d', aspectPerItem=1 },
-    ['fames']  = { ['dbHash'] = '8b106d64a741bd634abb3a79b7b0708f41094c87a7fd4d91120dff483c4d742d', aspectPerItem=1 },
-    ['permutatio']  = { ['dbHash'] = '8b106d64a741bd634abb3a79b7b0708f41094c87a7fd4d91120dff483c4d742d', aspectPerItem=1 },
-    ['vacuos']  = { ['dbHash'] = '15a3b59380369fe63a390d7c5a08ed674617928b081042ffff88a3bbd18e252b', aspectPerItem=4 },
-    ['tenebrae']  = { ['dbHash'] = 'e53c49f599f69fc5afecbcec03c983e4e13376d67079e2c298dd18051805b2b4', aspectPerItem=1 },
-    ['humanus']  = { ['dbHash'] = '2212dc39e4c9dbb7bc2d51592c446a57204e5596eae1f70e39379eba503259ac', aspectPerItem=1 },
-    ['corpus']  = { ['dbHash'] = '2212dc39e4c9dbb7bc2d51592c446a57204e5596eae1f70e39379eba503259ac', aspectPerItem=2 },
-    ['aqua']  = { ['dbHash'] = '72ba1b7b1161728d19a2187b74659e85289a5c4e810f5c7c1949bb0206690688', aspectPerItem=1 },
-    ['aer']  = { ['dbHash'] = '72ba1b7b1161728d19a2187b74659e85289a5c4e810f5c7c1949bb0206690688', aspectPerItem=1 },
-    ['mortuus']  = { ['dbHash'] = 'b7dcd5ac2b95a1286ad81a1ece0d710c766622073f13903c5720b7d17c5bebda', aspectPerItem=4 },
-    ['spiritus']  = { ['dbHash'] = 'b7dcd5ac2b95a1286ad81a1ece0d710c766622073f13903c5720b7d17c5bebda', aspectPerItem=4 },
-    ['motus']  = { ['dbHash'] = '2b390abd03dadea55705419e8877ad14db942d6d505e83be34fd95c73e5024ca', aspectPerItem=1 }
+      ['arbor']         = { dbHashes = { 'da8a0d6fe2dbefc51465e3263a800a45c8e28491aba2f8bf280ed54a1abb7367' }, aspectPerItem= { 3 } }
+    , ['meto']          = { dbHashes = { 'da8a0d6fe2dbefc51465e3263a800a45c8e28491aba2f8bf280ed54a1abb7367' }, aspectPerItem= { 1 } }
+    , ['instrumentum']  = { dbHashes = { 'e1eb7f00c234839013ddef9f03229636d22de147adcf9fee626de1644fbf2c80' }, aspectPerItem= { 1 } }
+    , ['machina']       = { dbHashes = { '3cb44f9b5008c88719725f87bf2cedc83a5d0307bb3650c66b7b43e03958cb31' }, aspectPerItem= { 1 } }
+    , ['exanimis']      = { dbHashes = { '8b5883c60fb1e6cde2384682faae559a848a1e204b87b341149cffc960927199' }, aspectPerItem= { 2 } }
+    , ['auram']         = { dbHashes = { '8b5883c60fb1e6cde2384682faae559a848a1e204b87b341149cffc960927199' }, aspectPerItem= { 2 } }
+    , ['alienis']       = { dbHashes = { 'e6a2b5400b7df28b380a7bc8d3d829fd27bf62edd271ecf4aef61c144147ae9d' }, aspectPerItem= { 2 } }
+    , ['fabrico']       = { dbHashes = { '157ce4ee77cbe7dac042945ff2f01d2fda26e8b32db981b8b5d8f5b90bc9b49d' }, aspectPerItem= { 4 } }
+    , ['lux']           = { dbHashes = { '21be5ee78a5946ceea8d9e00a0b32946e68c6ffe0b2e06b305f6a883f3ef09c3' }, aspectPerItem= { 1 } }
+    , ['herba']         = { dbHashes = { 'd653a59fe29710ec3fe9bc1bb757e89d9ea15841d047aaf2a00097c33d12f656' }, aspectPerItem= { 2 } }
+    , ['praecantatio']  = { dbHashes = { '16cede6115da3acb53ad9074b9f284f15d5c4a9be15549dc9c5020e2ef62d6d3' }, aspectPerItem= { 1 } }
+    , ['potentia']      = { dbHashes = { '8d2b26049f594ccaf34f830644652c981058b60f1434b8256e8304aeb5ec8fc2' }, aspectPerItem= { 2 } }
+    , ['ignis']         = { dbHashes = { '8d2b26049f594ccaf34f830644652c981058b60f1434b8256e8304aeb5ec8fc2' }, aspectPerItem= { 2 } }
+    , ['terra']         = { dbHashes = { '8f87afc6b6cc8cbb3d973c5a9fa0a0973d9c2c8e2727ec389b479252058dda4f' }, aspectPerItem= { 1 } }
+    , ['perditio']      = { dbHashes = { '8f87afc6b6cc8cbb3d973c5a9fa0a0973d9c2c8e2727ec389b479252058dda4f' }, aspectPerItem= { 1 } }
+    , ['messis']        = { dbHashes = { '8b106d64a741bd634abb3a79b7b0708f41094c87a7fd4d91120dff483c4d742d' }, aspectPerItem= { 1 } }
+    , ['fames']         = { dbHashes = { '8b106d64a741bd634abb3a79b7b0708f41094c87a7fd4d91120dff483c4d742d' }, aspectPerItem= { 1 } }
+    , ['permutatio']    = { dbHashes = { '8b106d64a741bd634abb3a79b7b0708f41094c87a7fd4d91120dff483c4d742d' }, aspectPerItem= { 1 } }
+    , ['vacuos']        = { dbHashes = { '15a3b59380369fe63a390d7c5a08ed674617928b081042ffff88a3bbd18e252b' }, aspectPerItem= { 4 } }
+    , ['tenebrae']      = { dbHashes = { 'e53c49f599f69fc5afecbcec03c983e4e13376d67079e2c298dd18051805b2b4' }, aspectPerItem= { 1 } }
+    , ['humanus']       = { dbHashes = { '2212dc39e4c9dbb7bc2d51592c446a57204e5596eae1f70e39379eba503259ac' }, aspectPerItem= { 1 } }
+    , ['corpus']        = { dbHashes = { '2212dc39e4c9dbb7bc2d51592c446a57204e5596eae1f70e39379eba503259ac' }, aspectPerItem= { 2 } }
+    , ['aqua']          = { dbHashes = { '72ba1b7b1161728d19a2187b74659e85289a5c4e810f5c7c1949bb0206690688' }, aspectPerItem= { 1 } }
+    , ['aer']           = { dbHashes = { '72ba1b7b1161728d19a2187b74659e85289a5c4e810f5c7c1949bb0206690688' }, aspectPerItem= { 1 } }
+    , ['mortuus']       = { dbHashes = { 'b7dcd5ac2b95a1286ad81a1ece0d710c766622073f13903c5720b7d17c5bebda' }, aspectPerItem= { 4 } }
+    , ['spiritus']      = { dbHashes = { 'b7dcd5ac2b95a1286ad81a1ece0d710c766622073f13903c5720b7d17c5bebda' }, aspectPerItem= { 4 } }
+    , ['motus']         = { dbHashes = { '2b390abd03dadea55705419e8877ad14db942d6d505e83be34fd95c73e5024ca' }, aspectPerItem= { 1 } }
+ -- , ['ordo']          = { dbHashes = { '3c6673f453dfb20629a318687bb6f0963f8d083a0092be0190dd2a31c41bba38' }, aspectPerItem= { 3 } }
+ -- , ['gelum']         = { dbHashes = { '01c0da6d07c3c67799c7616d3869b6fce23af5fa689d58ca08a41f5c65fefcf9' }, aspectPerItem= { 1 } }
+ -- , ['vitreus']       = { dbHashes = { '716c1a297eae5887208f2dd60f5dfdeb79dc2feb7ced61569c15c3ee18b6e354' }, aspectPerItem= { 1 } }
+ -- , ['limus']         = { dbHashes = { 'db1c9a455954912d51efbca9670d90f1a0a544e14af768ee7edfc9ab4713c9a5' }, aspectPerItem= { 1 } }
+ -- , ['victus']        = { dbHashes = { 'db1c9a455954912d51efbca9670d90f1a0a544e14af768ee7edfc9ab4713c9a5' }, aspectPerItem= { 1 } }
+ -- , ['bestia']        = { dbHashes = { '7d71941d38e6fd60bb62eee1263fd65e75d9e20b26afb9cee3d2243fe43c99b0' }, aspectPerItem= { 2 } }
+ -- , ['sensus']        = { dbHashes = { '7d71941d38e6fd60bb62eee1263fd65e75d9e20b26afb9cee3d2243fe43c99b0' }, aspectPerItem= { 2 } }
+ -- , ['venenum']       = { dbHashes = { '7d71941d38e6fd60bb62eee1263fd65e75d9e20b26afb9cee3d2243fe43c99b0' }, aspectPerItem= { 2 } }
+ -- , ['lucrum']        = { dbHashes = { '284a3a0b99b0144a37687127757cd58c711e50572cc4ead25d2ebeab21d48676' }, aspectPerItem= { 2 } }
+ -- , ['metallum']      = { dbHashes = { 'e585d58f042a38f850b7a8751eab602b782115b65cdc640adcd6ec310e6f5450' }, aspectPerItem= { 2 } }
 }
 
 local aspectsToMaintain = {}

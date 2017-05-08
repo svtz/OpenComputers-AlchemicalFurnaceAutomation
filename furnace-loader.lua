@@ -41,62 +41,86 @@ function loaderFactory.getLoader(interfaceAddress, transposerAddress, interfaceS
   end
   local interfaceSize = transposer.getInventorySize(interfaceSide)
 
-  local getRequestedItems = function(aspects)
+  local getRequestedItemGroups = function(aspects)
     api.log.debug('Transforming aspects into items')
     local result = {}
     for reqAspectIdx = 1, interfaceSize do
       local reqAspect = aspects[reqAspectIdx]
       if reqAspect == nil then break end
       
-      local currentResult = api.aspectsDict.getItemByAspect(reqAspect)
+      local currentResult = api.aspectsDict.getItemsByAspect(reqAspect)
       result[reqAspectIdx] = currentResult
-      api.log.debug('- ' .. reqAspect .. ' -> ' .. currentResult.label)
+      api.log.debug('- ' .. reqAspect .. ' -> (' .. #currentResult .. ' items)')
     end
 
     api.log.debug('Transformation complete')
     return result
   end
 
+  local setupInterface = function(reqItemGroup)
+    local currentIdx = reqItemGroup.currentItemIdx
+    local currentItem = reqItemGroup[currentIdx]
+    local currentStackIsOk = transposer.compareStackToDatabase(
+      interfaceSide, reqItemGroup.configIdx, currentItem.dbAddress, currentItem.entry)
+    if currentStackIsOk == true then return end
+
+    api.log.debug('already configured item is not available. trying to pick another one.')
+    currentIdx = currentIdx + 1
+    if currentIdx > #reqItemGroup then
+      currentIdx = 1
+    end
+    currentItem = reqItemGroup[currentIdx]
+    interface.setInterfaceConfiguration(reqItemGroup.configIdx, currentItem.dbAddress, currentItem.entry, currentItem.maxSize)
+  end
+
   loader.load = function(aspects, amount)
     api.log.debug('load: ' .. amount .. ' stacks')
-    local requestedItems = getRequestedItems(aspects)
+    local requestedItemGroups = getRequestedItemGroups(aspects)
     
     api.log.debug('Looking for already configured items in the interface')
     local validConfigurations = {}
-    for reqItemIdx = 1, interfaceSize do
-      local reqItem = requestedItems[reqItemIdx]
-      if reqItem == nil then break end
-      reqItem.configIdx = nil
-      api.log.debug('- searching ' .. reqItem.label)
+    for reqItemGroupIdx = 1, interfaceSize do
+      local reqItemGroup = requestedItemGroups[reqItemGroupIdx]
+      if reqItemGroup == nil then break end
+      reqItemGroup.configIdx = nil
+      api.log.debug('- searching group ' .. reqItemGroupIdx)
       for configIdx = 1, interfaceSize do
         local config = interface.getInterfaceConfiguration(configIdx)
-        if not (config == nil) and config.name == reqItem.name and config.label == reqItem.label then
-          validConfigurations[configIdx] = true
-          reqItem.configIdx = configIdx
-          api.log.debug('- found in slot ' .. configIdx)
-          break
+        if not (config == nil) then
+          for i = 1, #reqItemGroup do
+            local reqItem = reqItemGroup[i]
+            if config.name == reqItem.name and config.label == reqItem.label then
+              validConfigurations[configIdx] = true
+              reqItemGroup.configIdx = configIdx
+              reqItemGroup.currentItemIdx = i
+              api.log.debug('- found in slot ' .. configIdx)
+              break
+            end
+          end
+          if not (reqItemGroup.configIdx == nil) then break end
         end
       end
     end
 
     api.log.debug('Configuring remaining items')
-    for reqItemIdx = 1, interfaceSize do
-      local reqItem = requestedItems[reqItemIdx]
-      if reqItem == null then break end
-      api.log.debug('- configuring ' .. reqItem.label)     
-      if reqItem.configIdx == nil then
+    for reqItemGroupIdx = 1, interfaceSize do
+      local reqItemGroup = requestedItemGroups[reqItemGroupIdx]
+      if reqItemGroup == nil then break end
+      api.log.debug('- configuring group ' .. reqItemGroupIdx)
+      if reqItemGroup.configIdx == nil then
         for configIdx = 1, interfaceSize do
           if not validConfigurations[configIdx] == true then
             validConfigurations[configIdx] = true
-            reqItem.configIdx = configIdx
-            interface.setInterfaceConfiguration(configIdx, reqItem.dbAddress, reqItem.entry, reqItem.maxSize)
-            api.log.debug('- successfully configured, slot: ' .. configIdx)
+            reqItemGroup.configIdx = configIdx
+            reqItemGroup.currentItemIdx = 1
             break
           end
         end
       else
-        api.log.debug('- already in slot ' .. reqItem.configIdx)
+        api.log.debug('- already in slot ' .. reqItemGroup.configIdx)
       end
+      setupInterface(reqItemGroup)
+      api.log.debug('- successfully configured, slot: ' .. reqItemGroup.configIdx)
     end
 
     api.log.debug('Clearing other interface slots')
@@ -113,11 +137,12 @@ function loaderFactory.getLoader(interfaceAddress, transposerAddress, interfaceS
     while remainingStackCount > 0 do
       api.log.debug('- Remaining stacks: ' .. remainingStackCount)
       local totalTransferredPerCycle = 0
-      for reqItemIdx = 1, interfaceSize do
-        local reqItem = requestedItems[reqItemIdx]
-        if reqItem == nil then break end
+      for reqItemGroupIdx = 1, interfaceSize do
+        local reqItemGroup = requestedItemGroups[reqItemGroupIdx]
+        if reqItemGroup == nil then break end
+        local reqItem = reqItemGroup[reqItemGroup.currentItemIdx]
         api.log.debug('- loading ' .. reqItem.maxSize .. ' of ' .. reqItem.label)
-        local transferred = transposer.transferItem(interfaceSide, furnaceSide, reqItem.maxSize, reqItem.configIdx)
+        local transferred = transposer.transferItem(interfaceSide, furnaceSide, reqItem.maxSize, reqItemGroup.configIdx)
         local transferredCount = (transferred and 1 or 0)
         api.log.debug('- loaded ' .. transferredCount .. ' stack(s)')
         remainingStackCount = remainingStackCount - transferredCount 

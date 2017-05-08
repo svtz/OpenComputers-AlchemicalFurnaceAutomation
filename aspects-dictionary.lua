@@ -49,12 +49,12 @@ function dictionaryFactory.getDictionary(aspectsDict)
   
   local dbs, dbsCount = getDatabases()
 
-  local getItemByAspectCache = {}
-  dictionary.getItemByAspect = function(aspect)
-    api.log.debug('getItemByAspect: ' .. aspect)
-    if not (getItemByAspectCache[aspect] == nil) then
+  local getItemsByAspectCache = {}
+  dictionary.getItemsByAspect = function(aspect)
+    api.log.debug('getItemsByAspect: ' .. aspect)
+    if not (getItemsByAspectCache[aspect] == nil) then
       api.log.debug('Found in cache, ok')
-      return getItemByAspectCache[aspect]
+      return getItemsByAspectCache[aspect]
     end
 
     api.log.debug('Looking for aspect in the pre-configured dictionary')
@@ -64,22 +64,29 @@ function dictionaryFactory.getDictionary(aspectsDict)
     end
 
     api.log.debug('Searching source item in databases')
+    local foundItems = {}
     for i = 1, dbsCount do
       local db = dbs[i]
-      local stackIdx = db.indexOf(itemInfo.dbHash)
-      if stackIdx >= 0 then
-        local stack = db.get(stackIdx)
-        api.log.debug('Found itemStack: ' .. stack.label .. ', ok')
-        getItemByAspectCache[aspect] = {
-          label = stack.label,
-          name = stack.name,
-          dbAddress = db.address,
-          entry = stackIdx,
-          maxSize = stack.maxSize,
-          aspectPerItem = itemInfo.aspectPerItem
-        }
-        return getItemByAspectCache[aspect]
+      for i,dbHash in ipairs(itemInfo.dbHashes) do
+        local stackIdx = db.indexOf(dbHash)
+        if stackIdx >= 0 then
+          local stack = db.get(stackIdx)
+          api.log.debug('Found itemStack: ' .. stack.label .. ', ok')
+          table.insert(foundItems, {
+            label = stack.label,
+            name = stack.name,
+            dbAddress = db.address,
+            entry = stackIdx,
+            maxSize = stack.maxSize,
+            aspectPerItem = itemInfo.aspectPerItem[i]
+          })
+        end
       end
+    end
+
+    if (#foundItems > 0) then
+      getItemsByAspectCache[aspect] = foundItems
+      return foundItems
     end
 
     error("Can't find itemStack for " .. aspect .. " in any of databases.")
@@ -124,10 +131,12 @@ function dictionaryFactory.getDictionary(aspectsDict)
     api.log.debug("Searching candidate's aspects in pre-configured dictionary")
     local aspects = { n = 0 }
     for k,v in pairs(aspectsDict) do
-      if v.dbHash == candidate then
-        aspects.n = aspects.n + 1
-        aspects[aspects.n] = { name = k, perItem = v.aspectPerItem }
-        api.log.debug('- found ' .. k .. ' (' .. v.aspectPerItem .. ')')
+      for i,dbHash in ipairs(v.dbHashes) do
+        if dbHash == candidate then
+          aspects.n = aspects.n + 1
+          aspects[aspects.n] = { name = k, perItem = v.aspectPerItem[i] }
+          api.log.debug('- found ' .. k .. ' (' .. v.aspectPerItem[i] .. ')')
+        end
       end
     end
 
