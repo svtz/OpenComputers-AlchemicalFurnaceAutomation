@@ -107,6 +107,7 @@ function dictionaryFactory.getDictionary(aspectsDict)
 
     api.log.debug('Looking for ' .. label .. ' in databases')
     local candidate
+    local aspects = { n = 0 }
     for i = 1, dbsCount do
       local db = dbs[i]
       for j = 1, 100 do
@@ -129,7 +130,6 @@ function dictionaryFactory.getDictionary(aspectsDict)
     end
 
     api.log.debug("Searching candidate's aspects in pre-configured dictionary")
-    local aspects = { n = 0 }
     for k,v in pairs(aspectsDict) do
       for i,dbHash in ipairs(v.dbHashes) do
         if dbHash == candidate then
