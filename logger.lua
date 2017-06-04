@@ -3,6 +3,12 @@ local logFileThreshold = 400 * 1024
 
 local fs = require("filesystem")
 local logfile = fs.open(logFileName, "a")
+if (logfile == nil) then
+  logfile = fs.open(logFileName, "w")
+end
+if (logfile == nil) then
+  error('cannot open logfile')
+end
 local canWriteToFile = true
 
 local function writeToFile(message)

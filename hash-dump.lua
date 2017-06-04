@@ -1,6 +1,9 @@
 local databaseType = "database"
 local component = require("component")
+local serialization = require("serialization")
 local fs = require("filesystem")
+local logger = dofile("logger.lua")
+local log = logger.debug
 
 local function getDatabases()
   local addresses = component.list()
@@ -11,7 +14,7 @@ local function getDatabases()
     if v == databaseType then
       dbsCount = dbsCount + 1
       dbs[dbsCount] = component.proxy(k)
-      print("Database found at " .. k)
+      log.info("Database found at " .. k)
     end
   end
 
@@ -23,17 +26,21 @@ local output = fs.open("db-dump.txt", "w")
 if (output == nil) then error('!!!') end
 for i = 1, dbsCount do
   local db = dbs[i]
+  log.debug("Dumping database " .. db.address)
   for j = 1, 100 do
+    log.debug("Dumping slot " .. j)
     local stack
-    if pcall(function() stack = db.get(j) end) then
+    local status, err = pcall(function() stack = db.get(j) end)
+    if status then
       if not (stack == nil) then
         output:write(stack.label .. " : " .. db.computeHash(j) .. "\r\n")
       end
     else
+      log.debug('error getting stack: ' .. serialization.serialize(err, true))
       break
     end
   end
 end
 output:close()
 
-print('Dump complete')
+log.info('Dump complete')
